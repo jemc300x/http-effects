@@ -1,1 +1,30 @@
-<p>usuario works!</p>
+<div *ngIf="loading" class="alert alert-info" role="alert">
+  <h4 class="alert-heading">Cargando...</h4>
+  <p>
+    <i class="fa fa-sync fa-spin fa-x2"></i>
+  </p>
+</div>
+
+<div *ngIf="error" class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Error</h4>
+  <pre>
+    {{ error | json}}
+  </pre>
+</div>
+
+<div *ngIf="!loading" class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card">
+      <img [src]="usuario?.avatar" class="card-img-top" [alt]="usuario?.first_name">
+      <div class="card-body">
+        <h5 class="card-title">{{ usuario?.first_name }} {{ usuario?.last_name }}</h5>
+        <p class="card-text">This is a longer card with supporting.</p>
+        <p class="card-text">
+          <span class="text-muted">
+            ID: {{ usuario?.id }}
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

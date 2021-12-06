@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Usuario } from 'src/app/models/usuario.model';
-import { UsuarioService } from 'src/app/services/usuario.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { cargarUsuarios } from 'src/app/store/actions';
+import { Usuario } from '../../models/usuario.model';
+import { AppState } from '../../store/app.reducers';
 
 @Component({
   selector: 'app-lista',
@@ -8,20 +12,30 @@ import { UsuarioService } from 'src/app/services/usuario.service';
   styles: [
   ]
 })
-export class ListaComponent implements OnInit {
+export class ListaComponent implements OnInit, OnDestroy {
 
   usuarios: Usuario[] = [];
+  private destroy$: Subject<void> = new Subject<void>();
+  loading = false;
+  error: any;
 
-  constructor(public usuarioService: UsuarioService) { }
+  constructor(public store: Store<AppState>) { }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
-    this.usuarioService.getUser()
-      .subscribe(
-        users => {
-          this.usuarios = users
-          console.log(this.usuarios)
-        }
-      )
+    this.store.select('usuarios')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({users, loading, error}) => {
+        this.usuarios = users;
+        this.loading = loading;
+        this.error = error;
+      });
+    
+    this.store.dispatch(cargarUsuarios());
   }
 
 }

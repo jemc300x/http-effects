@@ -13,7 +13,11 @@ export class UsuarioService {
 
   constructor(private http: HttpClient) { }
 
-  getUser(): Observable<Usuario[]> {
+  getUser() {
     return this.http.get(`${this.apiUrl}/users?per_page=6`).pipe(map((resp: any) => resp.data));
+  }
+  
+  getUserById(id: string) {
+    return this.http.get(`${this.apiUrl}/users/${id}`).pipe(map((resp: any) => resp.data));
   }
 }
